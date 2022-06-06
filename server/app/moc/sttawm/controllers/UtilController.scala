@@ -7,6 +7,7 @@ import javax.inject._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UtilController @Inject() (cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
+class UtilController @Inject() (cc: ControllerComponents)(implicit ec: ExecutionContext)
+    extends AbstractController(cc) {
   def ping() = Action { Results.Ok(Json.obj("I pong" -> "therefore I am")) }
 }
