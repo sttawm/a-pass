@@ -1,0 +1,1 @@
+GET /ping                                   moc.sttawm.controllers.UtilController.ping()
