@@ -1,1 +1,10 @@
+###
+#  summary: health-check
+#  responses:
+#    '200':
+#      content:
+#        application/json:
+#          schema:
+#            type: object
+###
 GET /ping                                   moc.sttawm.controllers.PingController.ping()
