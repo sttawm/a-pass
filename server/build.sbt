@@ -10,7 +10,9 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       guice,
       // json
-      "com.typesafe.play" %% "play-json" % "2.9.2"
+      "com.typesafe.play" %% "play-json" % "2.9.2",
+      // tests
+      "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test
     ),
     scalacOptions ++= List(
       "-encoding",
