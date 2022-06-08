@@ -1,0 +1,12 @@
+### NoDocs ###
+GET   /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file:String)
+
+### NoDocs ###
+GET   /assets/swagger.json          sttawm.controllers.OpenApiController.specs
+
+### NoDocs ###
+GET   /assets/*file                 controllers.Assets.versioned(path="/public", file: Asset)
+
+### NoDocs ###
+# Redirect from root to the docs
+GET   /                             sttawm.controllers.OpenApiController.redirectDocs

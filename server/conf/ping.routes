@@ -1,1 +1,11 @@
+###
+#  summary: health-check
+#  responses:
+#    '200':
+#      description:
+#      content:
+#        application/json:
+#          schema:
+#            $ref: '#/components/schemas/sttawm.models.ApiResponse[sttawm.models.PingResponse]'
+###
 GET /ping                                   sttawm.controllers.PingController.ping()

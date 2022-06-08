@@ -7,10 +7,15 @@ lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
     name := "play-server",
+    // openapi
+    resolvers += Resolver.jcenterRepo,
     libraryDependencies ++= Seq(
       guice,
       // json
-      "com.typesafe.play" %% "play-json" % "2.9.2"
+      "com.typesafe.play" %% "play-json" % "2.9.2",
+      // openapi
+      "com.iheart" %% "play-swagger" % "0.10.6-PLAY2.8",
+      "org.webjars" % "swagger-ui" % "3.43.0"
     ),
     scalacOptions ++= List(
       "-encoding",
