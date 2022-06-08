@@ -1,0 +1,1 @@
+GET /ping                                   sttawm.controllers.PingController.ping()
