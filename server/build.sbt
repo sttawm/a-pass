@@ -4,6 +4,8 @@ ThisBuild / scalaVersion := "2.13.8"
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val root = (project in file("."))
+  .aggregate(client)
+  .dependsOn(client % "test")
   .enablePlugins(PlayScala)
   .settings(
     name := "play-server",
@@ -28,3 +30,5 @@ lazy val root = (project in file("."))
     ),
     javacOptions ++= List("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
   )
+	
+lazy val client = project
