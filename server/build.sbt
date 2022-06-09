@@ -17,7 +17,9 @@ lazy val root = (project in file("."))
       "com.typesafe.play" %% "play-json" % "2.9.2",
       // openapi
       "com.iheart" %% "play-swagger" % "0.10.6-PLAY2.8",
-      "org.webjars" % "swagger-ui" % "3.43.0"
+      "org.webjars" % "swagger-ui" % "3.43.0",
+      // tests
+      "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test,
     ),
     scalacOptions ++= List(
       "-encoding",
