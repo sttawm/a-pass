@@ -3,3 +3,5 @@ project/target
 .idea
 *.swp
 .DS_Store
+logs
+.bsp

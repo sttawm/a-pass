@@ -1,0 +1,13 @@
+version: "3"
+services:
+  pg:
+    build:
+      dockerfile: Docker/postgres/Dockerfile
+      context: .
+    container_name: pg
+    env_file:
+    - .env
+    volumes:
+    - ./pvdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
