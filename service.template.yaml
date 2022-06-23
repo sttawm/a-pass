@@ -1,0 +1,29 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: ${SERVICE}
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '1'
+        autoscaling.knative.dev/minScale: '0'
+        run.googleapis.com/ingress: all
+    spec:
+      containers:
+      - image: ${IMAGE}
+        ports:
+          containerPort: 9000
+        env:
+        - name: APP_CONF_FILE
+          value: application.conf
+        - name: APP_SECRET_KEY
+          value: Sjgu+U5wK4uTrRKyrRq1DyWiolpPXrBV44tcM8im4jI=
+        - name: DB_HOST
+          value: foo
+        - name: DB_DATABASE
+          value: database
+        - name: DB_USERNAME
+          value: username
+        - name: DB_PASSWORD
+          value: password
