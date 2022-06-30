@@ -46,8 +46,8 @@ name: Build and Deploy to Cloud Run with KRM
 on: [push]
 
 env:
-  PROJECT_ID: apass-354122 # TODO: update Google Cloud project id
-  SERVICE: apass-service-account # TODO: update Cloud Run service name
+  PROJECT_ID: apass-12345 # TODO: update Google Cloud project id
+  SERVICE: api-service # TODO: update Cloud Run service name
   REGION: us-central1 # TODO: update Cloud Run service region
 
 jobs:
@@ -70,7 +70,7 @@ jobs:
           workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
           service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
 
-      # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)
+      # BEGIN - Docker auth and build
 
       # Authenticate Docker to Google Cloud Artifact Registry
       - name: Docker Auth
@@ -81,31 +81,31 @@ jobs:
           password: '${{ steps.auth.outputs.access_token }}'
           registry: 'gcr.io'
 
-#      - name: Build and Push Container
-#        run: |-
-#          docker build -f Docker/play/Dockerfile -t "gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}" ./
-#          docker push "gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
+      - name: Build and Push Container
+        run: |-
+          docker build -f Docker/play/Dockerfile -t "gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:latest" -t "gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}" ./
+          docker push "gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:latest"
 
       # END - Docker auth and build
 
       # Create Cloud Run YAML Service specification from template
       # envsubst is replacing template variables and creating a YAML Service specification with the new image tag
-      - name: Create Service declaration   
-        run: |-
-          export IMAGE="gcr.io/apass-354122/apass-service-account:b34b028aa44fa7bf08c9a5989e623c60df2627f5"
-          # export IMAGE="gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
-          export SERVICE="${{ env.SERVICE }}"
-          envsubst < service.template.yaml > service.yaml
-
-      # Deploy Cloud Run Service from the YAML Service specification
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v0
-        with:
-          service: ${{ env.SERVICE }}
-          region: ${{ env.REGION }}
-          metadata: service.yaml
-
-      # If required, use the Cloud Run url output in later steps
-      - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
+#      - name: Create Service declaration   
+#        run: |-
+#          export IMAGE="gcr.io/apass-354122/apass-service-account:b34b028aa44fa7bf08c9a5989e623c60df2627f5"
+#          # export IMAGE="gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
+#          export SERVICE="${{ env.SERVICE }}"
+#          envsubst < service.template.yaml > service.yaml
+#
+#      # Deploy Cloud Run Service from the YAML Service specification
+#      - name: Deploy to Cloud Run
+#        id: deploy
+#        uses: google-github-actions/deploy-cloudrun@v0
+#        with:
+#          service: ${{ env.SERVICE }}
+#          region: ${{ env.REGION }}
+#          metadata: service.yaml
+#
+#      # If required, use the Cloud Run url output in later steps
+#      - name: Show Output
+#        run: echo ${{ steps.deploy.outputs.url }}
