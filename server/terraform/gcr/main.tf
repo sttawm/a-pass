@@ -1,42 +1,39 @@
-variable "project_id" {
-  default = "apass-4"
-}
-
 provider "google" {
   project = var.project_id
 }
 
-# Enables the IAM API
-resource "google_project_service" "iam_api" {
-  service            = "iam.googleapis.com"
-}
+# Enable APIs for the gh-oidc module
+//resource "google_project_service" "iam_api" {
+//  service            = "iam.googleapis.com"
+//}
+//resource "google_project_service" "cloudresourcemanager_api" {
+//  service            = "cloudresourcemanager.googleapis.com"
+//}
+//resource "google_project_service" "iamcredentials_api" {
+//  service            = "iamcredentials.googleapis.com.googleapis.com"
+//}
+//resource "google_project_service" "sts_api" {
+//  service            = "sts.googleapis.com"
+//}
 
-# Enables the GCR API
-resource "google_project_service" "gcr_api" {
-  service            = "containerregistry.googleapis.com"
-}
+# Enable APIs for GCR
+//resource "google_project_service" "gcr_api" {
+//  service            = "containerregistry.googleapis.com"
+//}
 
 //resource "google_container_registry" "registry" {
 //  project  = var.project_id
 //}
 
-//resource "google_iam_workload_identity_pool" "github" {
-//provider                  = google-beta
-//  workload_identity_pool_id = "github-${var.project_id}"
-//  project                   = var.project_id
-//  display_name = "Github identity pool"
-//}
+resource "google_service_account" "sa" {
+  project    = var.project_id
+  account_id = "github-actions-service-account"
+}
 
-module "github_actions_sa" {
-  source  = "terraform-google-modules/service-accounts/google"
-  version = "~> 4.0"
-
-  project_id = var.project_id
-
-  names        = ["github-actions-service-account"]
-  display_name = "Github Actions SA for GCP - Managed by Terraform"
-
-  project_roles =[]
+resource "google_project_iam_member" "storage_admin" {
+  project = var.project_id
+  role = "roles/storage.admin"
+  member = "serviceAccount:${google_service_account.sa.email}"
 }
 
 module "gh_oidc" {
@@ -45,9 +42,11 @@ module "gh_oidc" {
   pool_id        = "github-identity-pool"
   provider_id    = "github-identity-provider"
   sa_mapping     = {
-    "my_service_account" = {
-      sa_name   = "projects/${var.project_id}/serviceAccounts/${module.github_actions_sa.email}"
+    "(google_service_account.sa.account_id)" = {
+      sa_name   = google_service_account.sa.name
       attribute = "attribute.repository/sttawm/a-pass"
     }
   }
 }
+
+

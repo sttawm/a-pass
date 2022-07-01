@@ -46,8 +46,8 @@ name: Build and Deploy to Cloud Run with KRM
 on: [push]
 
 env:
-  PROJECT_ID: apass-4 # TODO: update Google Cloud project id
-  PROJECT_NUMBER: 279192793090
+  PROJECT_ID: apass-5 # TODO: update Google Cloud project id
+  PROJECT_NUMBER: 1042136034708
   SERVICE: github-actions-service-account # TODO: update Cloud Run service name
   REGION: us-central1 # TODO: update Cloud Run service region
 

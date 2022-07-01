@@ -32,8 +32,8 @@ For each of the following roles:
 ```
 export SERVICE=my-service-account
 gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
-  --role="$1" \
-  --member="serviceAccount:${SERVICE{@${PROJECT_ID}.iam.gserviceaccount.com"
+  --role="$ROLE" \
+  --member="serviceAccount:${SERVICE}@${PROJECT_ID}.iam.gserviceaccount.com"
 ```
 
 # 4. (Optional) Fine-tune the service
