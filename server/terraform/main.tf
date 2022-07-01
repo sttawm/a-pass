@@ -1,9 +1,17 @@
 variable "project_id" {
   default = "apass-12345"
 }
-
 variable "service_name" {
   default = "api-service"
+}
+variable "database_password" {
+  default = "209389207402"
+}
+variable "database_user" {
+  default = "sttawm"
+}
+variable "database_name" {
+  default = "my-database"
 }
 
 terraform {
@@ -19,11 +27,34 @@ provider "google" {
   project = var.project_id
 }
 
+# Create a postgres instance
+resource "google_sql_database_instance" "instance" {
+  name                = "postgres"
+  region              = "us-central1"
+  database_version    = "POSTGRES_13"
+  deletion_protection = true
+  settings {
+    tier = "db-f1-micro"
+  }
+}
+
+# Create a database
+resource "google_sql_database" "database" {
+  name     = var.database_name
+  instance = google_sql_database_instance.instance.name
+}
+
+# Create a database user
+resource "google_sql_user" "database-user" {
+  name = var.database_user
+  instance = google_sql_database_instance.instance.name
+  password = var.database_password
+}
+
 # Enables the Cloud Run API
 resource "google_project_service" "run_api" {
-  service = "run.googleapis.com"
+  service            = "run.googleapis.com"
 
-  disable_on_destroy = true
 }
 
 resource "google_cloud_run_service" "default" {
@@ -37,28 +68,28 @@ resource "google_cloud_run_service" "default" {
           container_port = 9000
         }
         env {
-          name = "APP_CONF_FILE"
+          name  = "APP_CONF_FILE"
           value = "application.conf"
         }
         env {
-          name = "APP_SECRET_KEY"
+          name  = "APP_SECRET_KEY"
           value = "Sjgu+U5wK4uTrRKyrRq1DyWiolpPXrBV44tcM8im4jI="
         }
         env {
-          name = "DB_HOST"
-          value = ""
+          name  = "DB_HOST"
+          value = "/cloudsql/${google_sql_database_instance.instance.connection_name}"
         }
         env {
-          name = "DB_DATABASE"
-          value = ""
+          name  = "DB_DATABASE"
+          value = var.database_name
         }
         env {
-          name = "DB_USERNAME"
-          value = ""
+          name  = "DB_USERNAME"
+          value = var.database_user
         }
         env {
-          name = "DB_PASSWORD"
-          value = ""
+          name  = "DB_PASSWORD"
+          value = var.database_password
         }
       }
     }
