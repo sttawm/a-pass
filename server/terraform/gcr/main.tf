@@ -17,9 +17,9 @@ resource "google_project_service" "iam_api" {
 //}
 
 # Enable APIs for GCR
-//resource "google_project_service" "gcr_api" {
-//  service            = "containerregistry.googleapis.com"
-//}
+resource "google_project_service" "gcr_api" {
+  service            = "containerregistry.googleapis.com"
+}
 
 //resource "google_container_registry" "registry" {
 //  project  = var.project_id
