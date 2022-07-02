@@ -92,7 +92,7 @@ resource "google_cloud_run_service" "default" {
         }
         env {
           name  = "DB_URL"
-          value = "jdbc:postgresql://localhost:5432/${var.database_name}?cloudSqlInstance=${google_sql_database_instance.instance.connection_name}&?unixSocketPath=/cloudsql/${google_sql_database_instance.instance.connection_name}"
+          value = "jdbc:postgresql:///${var.database_name}?cloudSqlInstance=${google_sql_database_instance.instance.connection_name}&unixSocketPath=/cloudsql/${google_sql_database_instance.instance.connection_name}&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
         }
         env {
           name  = "DB_USERNAME"

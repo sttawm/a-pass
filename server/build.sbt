@@ -22,6 +22,8 @@ lazy val root = (project in file("."))
       "com.typesafe.play" %% "play-slick-evolutions" % playSlickVersion,
       // json
       "com.typesafe.play" %% "play-json" % playJsonVersion,
+      // gcloud
+      "com.google.cloud.sql" % "postgres-socket-factory" % "1.6.1",
       //logging
       "net.logstash.logback" % "logstash-logback-encoder" % "7.2",
       "com.fasterxml.jackson.module" % "jackson-module-scala_2.13" % jacksonVersion,
