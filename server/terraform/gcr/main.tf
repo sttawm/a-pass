@@ -27,7 +27,7 @@ resource "google_project_service" "gcr_api" {
 
 resource "google_service_account" "sa" {
   project    = var.project_id
-  account_id = "github-actions-service-account"
+  account_id = var.service_account
 }
 
 resource "google_project_iam_member" "storage_admin" {

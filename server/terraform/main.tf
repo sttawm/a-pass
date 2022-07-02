@@ -1,8 +1,8 @@
 variable "project_id" {
-  default = "apass-12345"
+  default = "apass-5"
 }
-variable "service_name" {
-  default = "api-service"
+variable "service_account" {
+  default = "github-actions-service-account"
 }
 variable "database_password" {
   default = "209389207402"
@@ -54,16 +54,31 @@ resource "google_sql_user" "database-user" {
 # Enables the Cloud Run API
 resource "google_project_service" "run_api" {
   service            = "run.googleapis.com"
+}
 
+resource "google_project_service" "compute_api" {
+  service = "compute.googleapis.com"
+}
+
+resource "google_project_service" "sqladmin_api" {
+  service = "sqladmin.googleapis.com"
+}
+
+resource "google_project_service" "cloudbuild_api" {
+  service = "cloudbuild.googleapis.com"
+}
+
+resource "google_project_service" "servicenetworking_api" {
+  service = "servicenetworking.googleapis.com"
 }
 
 resource "google_cloud_run_service" "default" {
-  name     = var.service_name
+  name     = var.service_account
   location = "us-central1"
   template {
     spec {
       containers {
-        image = format("gcr.io/%s/%s:b34b028aa44fa7bf08c9a5989e623c60df2627f5", var.project_id, var.service_name)
+        image = format("gcr.io/%s/%s:latest", var.project_id, var.service_account)
         ports {
           container_port = 9000
         }
@@ -76,12 +91,8 @@ resource "google_cloud_run_service" "default" {
           value = "Sjgu+U5wK4uTrRKyrRq1DyWiolpPXrBV44tcM8im4jI="
         }
         env {
-          name  = "DB_HOST"
-          value = "/cloudsql/${google_sql_database_instance.instance.connection_name}"
-        }
-        env {
-          name  = "DB_DATABASE"
-          value = var.database_name
+          name  = "DB_URL"
+          value = "jdbc:postgresql://localhost:5432/${var.database_name}?cloudSqlInstance=${google_sql_database_instance.instance.connection_name}&?unixSocketPath=/cloudsql/${google_sql_database_instance.instance.connection_name}"
         }
         env {
           name  = "DB_USERNAME"
@@ -97,6 +108,8 @@ resource "google_cloud_run_service" "default" {
       annotations = {
         "autoscaling.knative.dev/minScale" = "0"
         "autoscaling.knative.dev/maxScale" = "1"
+        "run.googleapis.com/cloudsql-instances" = google_sql_database_instance.instance.connection_name
+        "run.googleapis.com/client-name"        = "cloud-console"
       }
     }
   }
@@ -120,4 +133,8 @@ resource "google_cloud_run_service_iam_member" "run_all_users" {
 # Display the service URL
 output "service_url" {
   value = google_cloud_run_service.default.status[0].url
+}
+
+output "self_link" {
+  value = google_sql_database_instance.instance.self_link
 }
